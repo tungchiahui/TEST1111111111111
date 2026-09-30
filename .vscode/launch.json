@@ -4,85 +4,89 @@
     "configurations": [
         {
             // 调试配置名称
-            // 这里只影响 VS Code "Run and Debug" 里的显示名称
-            "name": "STM32 - pyOCD - Cortex Debug",
+            "name": "STM32 - OpenOCD - Cortex Debug",
 
-            // Cortex-Debug 固定写法，不要改
+            // Cortex-Debug 固定写法
             "type": "cortex-debug",
 
-            // launch = 下载程序并开始调试
-            // 一般 STM32 开发就用 launch
+            // 下载程序并开始调试
             "request": "launch",
 
             // 工程工作目录
-            // 通常不需要修改
             "cwd": "${workspaceFolder}",
 
-            // ★ 必改：编译生成的 ELF 文件路径
-            // Linux / Windows 都推荐用 ${workspaceFolder}
+            // ★ 必改：编译生成的 ELF
             "executable": "${workspaceFolder}/build/Debug/TEST.elf",
 
-            // 使用 pyOCD 作为 GDB Server
-            // 如果你决定使用 pyOCD，这个不要改
-            "servertype": "pyocd",
+            // 使用 OpenOCD
+            "servertype": "openocd",
 
-            // ★ 必改：pyOCD 的目标芯片 ID
-            "targetId": "stm32f103c8",
+            // ★ OpenOCD 可执行文件
+            // Linux 下用 which openocd 查询
+            "serverpath": "/usr/bin/openocd",
 
-            // ★ 必改：ARM GNU Toolchain 的 bin 目录
+            // ★ 根据调试器和 MCU 修改
+            //
+            // ST-Link：
+            // interface/stlink.cfg
+            //
+            // STM32F1：
+            // target/stm32f1x.cfg
+            //
+            // STM32F4 则是：
+            // target/stm32f4x.cfg
+            "configFiles": [
+                "interface/stlink.cfg",
+                "target/stm32f1x.cfg"
+            ],
+
+            // ★ ARM GNU Toolchain 的 bin 目录
+            // 建议不要直接写 "~"
+            // 用 ${env:HOME} 更稳
             "armToolchainPath": "/home/tungchiahui/.local/share/stm32cube/bundles/gnu-tools-for-stm32/14.3.1+st.2/bin",
 
-            // 启动后运行到哪个函数再停下来
-            // 一般 STM32 就写 main
-            // 通常不用改
-            "runToEntryPoint": "main"
+            // 启动后运行到 main()
+            "runToEntryPoint": "main",
+
+            // ★ Cortex Live Watch
+            // OpenOCD 下可用
+            // samplesPerSecond 最大 20
+            // 先用 4Hz 足够
+            "liveWatch": {
+                "enabled": true,
+                "samplesPerSecond": 4
+            }
 
 
             // ============================================================
-            // 下面这些暂时都不是必须的
-            // 有需求时再打开
+            // 以下为可选配置
             // ============================================================
 
 
-            // ------------------------------------------------------------
-            // 如果 Cortex-Debug 找不到 pyocd，可以手动指定
-            //
+            // 如果 Cortex-Debug 找不到 OpenOCD，
             // Linux：
-            // which pyocd
+            // which openocd
             //
-            // Windows：
-            // Get-Command pyocd
+            // 一般 Fedora 是：
+            // /usr/bin/openocd
             //
-            // "serverpath": "/home/你的用户名/.local/bin/pyocd",
-            // ------------------------------------------------------------
+            // "serverpath": "/usr/bin/openocd",
 
 
-            // ------------------------------------------------------------
-            // 如果插了多个兼容的调试器，可指定 pyOCD probe
+            // 如果 OpenOCD 找不到 interface/*.cfg 或 target/*.cfg，
+            // Fedora 一般脚本目录在：
+            // /usr/share/openocd/scripts
             //
-            // pyocd list
+            // 可以显式增加：
             //
-            // 然后填它的 Unique ID
-            //
-            // "boardId": "你的调试器Unique ID",
-            // ------------------------------------------------------------
+            // "searchDir": [
+            //     "/usr/share/openocd/scripts"
+            // ],
 
 
-            // ------------------------------------------------------------
-            // 如果不想自动运行到 main，而是 reset 后立即停住，
-            // 可以删除 runToEntryPoint，然后打开：
-            //
-            // "breakAfterReset": true,
-            // ------------------------------------------------------------
-
-
-            // ------------------------------------------------------------
-            // 调试 Cortex-Debug / pyOCD 配置问题时可以打开
+            // 调试 Cortex-Debug / OpenOCD 问题：
             //
             // "showDevDebugOutput": "raw"
-            //
-            // 正常使用不要开，输出会很多
-            // ------------------------------------------------------------
         }
     ]
 }
