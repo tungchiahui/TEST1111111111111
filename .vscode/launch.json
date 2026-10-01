@@ -1,92 +1,71 @@
 {
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
-
     "configurations": [
         {
-            // 调试配置名称
-            "name": "STM32 - OpenOCD - Cortex Debug",
-
-            // Cortex-Debug 固定写法
-            "type": "cortex-debug",
-
-            // 下载程序并开始调试
+            "type": "stgdbtarget",
             "request": "launch",
-
-            // 工程工作目录
+            "name": "STM32Cube: Launch Generic GDB Server",
+            "origin": "snippet",
             "cwd": "${workspaceFolder}",
-
-            // ★ 必改：编译生成的 ELF
-            "executable": "${workspaceFolder}/build/Debug/TEST.elf",
-
-            // 使用 OpenOCD
-            "servertype": "openocd",
-
-            // ★ OpenOCD 可执行文件
-            // Linux 下用 which openocd 查询
-            "serverpath": "/usr/bin/openocd",
-
-            // ★ 根据调试器和 MCU 修改
-            //
-            // ST-Link：
-            // interface/stlink.cfg
-            //
-            // STM32F1：
-            // target/stm32f1x.cfg
-            //
-            // STM32F4 则是：
-            // target/stm32f4x.cfg
-            "configFiles": [
+            "preBuild": "${command:st-stm32-ide-debug-launch.build}",
+            "program": "${command:st-stm32-ide-debug-launch.get-projects-binary-from-context1}",
+            "gdb": "${command:st-stm32-ide-debug-launch.get-gdb-executable}",
+            "deviceName": "${command:st-stm32-ide-debug-launch.get-device-name}",
+            "deviceCore": "${command:st-stm32-ide-debug-launch.get-core-name}",
+            "deviceTrustzone": "${command:st-stm32-ide-debug-launch.get-trustzone-status}",
+            "serverExe": "openocd",
+            "serverParameters": [                
+                "-f",
                 "interface/stlink.cfg",
-                "target/stm32f1x.cfg"
-            ],
 
-            // ★ ARM GNU Toolchain 的 bin 目录
-            // 建议不要直接写 "~"
-            // 用 ${env:HOME} 更稳
-            "armToolchainPath": "/home/tungchiahui/.local/share/stm32cube/bundles/gnu-tools-for-stm32/14.3.1+st.2/bin",
+                "-c",
+                "transport select swd",
 
-            // 启动后运行到 main()
-            "runToEntryPoint": "main",
+                "-f",
+                "target/stm32f1x.cfg",
 
-            // ★ Cortex Live Watch
-            // OpenOCD 下可用
-            // samplesPerSecond 最大 20
-            // 先用 4Hz 足够
+                "-c",
+                "$_TARGETNAME configure -gdb-max-connections 2"],
+            "serverHost": "localhost",
+            "serverPort": "3333",
+            "serverCwd": "/usr/bin",
             "liveWatch": {
                 "enabled": true,
-                "samplesPerSecond": 4
-            }
-
-
-            // ============================================================
-            // 以下为可选配置
-            // ============================================================
-
-
-            // 如果 Cortex-Debug 找不到 OpenOCD，
-            // Linux：
-            // which openocd
-            //
-            // 一般 Fedora 是：
-            // /usr/bin/openocd
-            //
-            // "serverpath": "/usr/bin/openocd",
-
-
-            // 如果 OpenOCD 找不到 interface/*.cfg 或 target/*.cfg，
-            // Fedora 一般脚本目录在：
-            // /usr/share/openocd/scripts
-            //
-            // 可以显式增加：
-            //
-            // "searchDir": [
-            //     "/usr/share/openocd/scripts"
-            // ],
-
-
-            // 调试 Cortex-Debug / OpenOCD 问题：
-            //
-            // "showDevDebugOutput": "raw"
+                "samplesPerSecond": "4"
+            },
+            "runEntry": "main",
+            "imagesAndSymbols": [
+                {
+                    "imageFileName": "${command:st-stm32-ide-debug-launch.get-projects-binary-from-context1}",
+                    "imageOffset": "",
+                    "symbolFileName": "${command:st-stm32-ide-debug-launch.get-projects-binary-from-context1}",
+                    "symbolOffset": ""
+                }
+            ]
+        },
+        {
+            "type": "stgdbtarget",
+            "request": "attach",
+            "name": "STM32Cube: Launch GDB Client",
+            "origin": "snippet",
+            "cwd": "${workspaceFolder}",
+            "preBuild": "${command:st-stm32-ide-debug-launch.build}",
+            "program": "${command:st-stm32-ide-debug-launch.get-projects-binary-from-context1}",
+            "gdb": "${command:st-stm32-ide-debug-launch.get-gdb-executable}",
+            "serverHost": "localhost",
+            "serverPort": "${command:st-stm32-ide-debug-launch.get-server-port}",
+            "runEntry": "main",
+            "imagesAndSymbols": [
+                {
+                    "imageFileName": "${command:st-stm32-ide-debug-launch.get-projects-binary-from-context1}",
+                    "imageOffset": "",
+                    "symbolFileName": "${command:st-stm32-ide-debug-launch.get-projects-binary-from-context1}",
+                    "symbolOffset": ""
+                }
+            ]
         }
     ]
 }
