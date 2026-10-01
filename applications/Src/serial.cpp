@@ -92,10 +92,10 @@ void StartSerialTask(void *argument)
         fp32 vy = static_cast<fp32>(std::cos(t));
         fp32 wz = static_cast<fp32>(0.5 * std::sin(t));
 
-        cmd_vel2.seq = seq;
-        cmd_vel2.v[0] = vx;
-        cmd_vel2.v[1] = vy;
-        cmd_vel2.v[2] = wz;
+        // cmd_vel2.seq = seq;
+        // cmd_vel2.v[0] = vx;
+        // cmd_vel2.v[1] = vy;
+        // cmd_vel2.v[2] = wz;
 
         auto frame = protocol_.pack(0x01,seq,vx,vy,wz);
 

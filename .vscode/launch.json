@@ -19,7 +19,7 @@
             "serverExe": "openocd",
             "serverParameters": [                
                 "-f",
-                "interface/stlink.cfg",
+                "interface/cmsis-dap.cfg",
 
                 "-c",
                 "transport select swd",
